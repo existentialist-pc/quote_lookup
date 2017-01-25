@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Quote Lookup</title>
+    <script src="/static/js/jquery-3.1.1.js"></script>
+
+</head>
+<body>
+    <h1>Quote查询</h1>
+    <div>
+        <form id="quote-form">
+            <input type="text" id="quote" name="quote">
+            <button type="button" onclick="submitQuote()">查询</button>
+        </form>
+    </div>
+    <div>
+        <h3>最多查询：</h3>
+        {% for lookup in lookups%}
+        <a href="#" onclick="subQuote()">{{ lookup.symbol }}</a>
+        {% endfor %}
+    </div>
+    <div>
+        <table>
+            <tr id="results">
+                <th>日期</th>
+                <th>开盘价</th>
+                <th>最高价</th>
+                <th>最低价</th>
+                <th>收盘价</th>
+                <th>修正收盘价*</th>
+                <th>成交量</th>
+        </table>
+    </div>
+    <script>
+        function submitQuote(quotename='') {
+            var quote = $('#quote');
+            if (quotename){
+                quote.attr('value', quotename)
+            }
+            $.ajax('/api/results?lookup=' + quote.val(), {
+                type: "GET",
+                dataType: "json",
+                success: function(data){
+                    // location.assign('/')
+                    alert(data.timestamp.length)
+                    var tr = $('#results');
+                    for (var i=0; i<data.timestamp.length; i++) {
+                        tr.after('<tr><td>' + Date.parse(data.timestamp[i])  +
+                                    '</td><td>' + data.open[i]  +
+                                    '</td><td>' + data.high[i]  +
+                                    '</td><td>' + data.low[i]  +
+                                    '</td><td>' + data.close[i]  +
+                                    '</td><td>' + data.close[i]  +
+                                    '</td><td>' + data.volume[i]  + '</td></tr>')
+                    };
+                }
+            });
+        }
+    </script>
+</body>
+</html>
