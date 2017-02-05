@@ -1,6 +1,7 @@
 from flask_bootstrap import Bootstrap
 from flask_pymongo import PyMongo
 from flask import Flask
+import os
 
 bootstrap = Bootstrap()
 mongo = PyMongo()
@@ -8,9 +9,12 @@ mongo = PyMongo()
 
 def create_app():
     app = Flask(__name__)
-    # app.config['MONGO_URI'] = 'mongodb://localhost/quote_lookup'
-    app.config['MONGO_DBNAME'] = 'quote_lookup'
+
     # 为该app挂载各种与该模块相关的配置.config 与 属性方法等
+    # app.config['MONGO_URI'] = 'mongodb://localhost/quote_lookup'
+    app.config['MONGO_DBNAME'] = os.environ.get('MONGO_DBNAME') or 'quote_lookup'
+    app.config['MAIL_ADMIN'] = os.environ.get('MAIL_ADMIN') or 'cwr603@126.com'
+
     bootstrap.init_app(app)
     mongo.init_app(app)
 
