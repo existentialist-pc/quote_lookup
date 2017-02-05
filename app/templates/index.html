@@ -70,7 +70,8 @@
 {% block scripts %}
     {{ super() }}
     <script>
-        function submitQuote(quotename='') {
+        function submitQuote() {
+            var quotename = arguments[0]||'';
             var quote = $('#quote');
             if (quotename){
                 quote.val(quotename)

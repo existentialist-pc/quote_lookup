@@ -5,7 +5,7 @@ from .utils import bson_to_json
 from .errors import not_found
 from .. import mongo
 from flask import request
-import time
+import time, datetime
 
 
 @api.route('/results')
@@ -14,7 +14,8 @@ def index():  # 获取GET查询请求，json返回页面内容解析数据
     quote_information_in_db = mongo.db.quote.find_one({'symbol': lookup})  # return Dict对象
 
     # 查询逻辑
-    if quote_information_in_db and (time.time() - quote_information_in_db.get('last_update', 0) <= 86400):  # 更新<24小时
+    # if quote_information_in_db and (datetime.datetime.now().day == datetime.date.fromtimestamp(quote_information_in_db.get('last_update', 0)).day):  # 隔天更新
+    if quote_information_in_db and (time.time() - quote_information_in_db.get('last_update', 0) <= 60 * 60 * 8):  # 8小时更新
         print('Get "%s" data directly from database.' % lookup)
         mongo.db.quote.update_one({'symbol': lookup}, {'$inc': {'request_times':1}})
         results = mongo.db.quote.find_one({'symbol': lookup})
